@@ -11,15 +11,31 @@ from .password_generator import Generate_Password
 
 from .vault import Encrypt_Vault, Decrypt_Vault
 
+from pathlib import Path
 
 #Creates the master password when program is first started up
 def Create_Master_Password():
+	SCRIPT_DIR = Path(__file__).parent
+	file_path = SCRIPT_DIR / "common-passwords.txt"
+
 	while True:
+		bad_password = False
 		Password = getpass("Create a master password: ")
 		if len(Password) < 8:
 			print("Master password must be at least 8 characters.")
 			continue
+		
+		with open(file_path, "r", encoding="utf-8") as file: 
+			for line in file:
+				value = line.strip()	
+				if value == Password:
+					print("Common password detected, consider a stronger password.")
+					bad_password = True
+					break
 
+		if bad_password:
+			continue
+			
 		Confirmation = getpass("Confirm master password: ")
 		if Password != Confirmation:
 			print("Passwords do not match.")
